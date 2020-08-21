@@ -29,14 +29,16 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageView
-        android:id="@+id/black_box"
-        android:layout_width="409dp"
-        android:layout_height="332dp"
+    <Button
+        android:id="@+id/qr_button"
+        android:layout_width="303dp"
+        android:layout_height="312dp"
+        android:layout_marginTop="4dp"
+        android:textSize="100px"
+        android:text="Scan QR Code"
         app:layout_constraintBottom_toTopOf="@+id/scan_qr_code"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.593" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
