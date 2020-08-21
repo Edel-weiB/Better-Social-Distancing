@@ -50,7 +50,7 @@ public class QRreader extends AppCompatActivity {
                 });
 
 //
-                
+
 
             }
         });
