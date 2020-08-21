@@ -14,13 +14,11 @@ import androidx.navigation.ui.NavigationUI;
 
 public class MainActivity extends AppCompatActivity {
 
-    public void toMap (View view) {
-        Intent intent = new Intent(this, MapsActivity.class);
-        startActivity(intent);
-    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
