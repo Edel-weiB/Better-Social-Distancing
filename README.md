@@ -22,4 +22,6 @@ node Backend/engine.js
 ```
 ## Map DB functions
 ### Add a point
-```localhost:3000/map/add?pointx=888&pointy=777```
+```
+localhost:3000/map/add?pointx=888&pointy=777
+```
