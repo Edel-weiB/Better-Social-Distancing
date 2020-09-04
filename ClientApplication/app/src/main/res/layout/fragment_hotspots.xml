@@ -10,7 +10,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/title_activity_maps"
-        android:onClick="toMap"
         android:id="@+id/mapBtn"
         android:layout_marginTop="30dp"
         app:layout_constraintBottom_toTopOf="@+id/nav_host_fragment"
