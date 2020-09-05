@@ -46,10 +46,9 @@ public class QRreader extends AppCompatActivity {
                     @Override
                     public void run() {
                         resultData.setText(results.getText());
+                        resultData.setVisibility(View.VISIBLE);
                     }
                 });
-
-//
 
 
             }
