@@ -7,6 +7,18 @@
     tools:context=".QRreader">
 
     <TextView
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Check in to:"
+        app:layout_constraintBottom_toTopOf="@+id/qr_result"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:textColor="#000000"/>
+
+    <Button
         android:id="@+id/qr_result"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
@@ -17,7 +29,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scannerView" />
+        app:layout_constraintTop_toBottomOf="@+id/scannerView"
+        android:visibility="gone"/>
 
     <com.budiyev.android.codescanner.CodeScannerView
         android:id="@+id/scannerView"
@@ -44,5 +57,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/whitebox"
         android:visibility="gone"/>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
