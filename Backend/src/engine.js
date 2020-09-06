@@ -78,14 +78,14 @@ connect_2_db = (credentials) => {
         credentials.password +
         credentials.hostName +
         "/" +
-        // we are accessing database name(i.e map not cluster name)
-        // so thats why its been renamed to creds.database
-        credentials.database +
+        credentials.cluster +
         "?retryWrites=true&w=majority";
     const uri =
         ATLAS_connection_string +
         "&useNewUrlParser=true&useUnifiedTopology=true";
+    console.log(uri);
     const client = new MongoClient(uri);
+
     return client;
 };
 sleep = (ms) => {
@@ -155,7 +155,7 @@ app.use((req, res, next) => {
 
 //-------------- Map -------------------
 // Add new map points
-app.get("/map/add", (req, res) => {
+app.post("/map/add", (req, res) => {
     const x = req.query.pointx;
     const y = req.query.pointy;
 
@@ -172,7 +172,9 @@ app.get("/map/add", (req, res) => {
         });
         client.close();
         // send done signal
-        await res.send("done");
+        await res.status(201).json({
+            message: "Done",
+        });
     })();
 });
 
@@ -195,6 +197,7 @@ app.get("/rng", (req, res) => {
     res.send(JSON.stringify([x, y]));
 });
 
+// User Routes
 const userRoutes = require("./routes/users");
 app.use("/users", userRoutes);
 
