@@ -21,15 +21,24 @@ And fill in the `username`, `password`, `cluster` and `HostName`
 simply
 
 ```
+cd Backend
 npm install
 ```
 
 ### Running
 
-in cmd
+in cmd in the Backend directory
 
 ```
 npm start
+```
+
+### Run Tests
+
+in cmd/Terminal in the Backend directory
+
+```
+npm run test
 ```
 
 ## Map DB functions

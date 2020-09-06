@@ -132,7 +132,3 @@ dist
 
 # Credentials
 ATLAS_credendials.json
-
-#Remove unecessary directory
-.idea/
-.vs/
