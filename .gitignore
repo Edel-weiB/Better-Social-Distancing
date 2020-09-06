@@ -85,6 +85,7 @@ web_modules/
 # dotenv environment variables file
 .env
 .env.test
+Backend\src\db.env
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -131,3 +132,7 @@ dist
 
 # Credentials
 ATLAS_credendials.json
+
+#Remove unecessary directory
+.idea/
+.vs/
