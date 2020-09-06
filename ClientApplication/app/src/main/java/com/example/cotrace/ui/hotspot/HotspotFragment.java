@@ -1,24 +1,23 @@
 package com.example.cotrace.ui.hotspot;
 
-import android.content.Intent;
+import android.annotation.SuppressLint;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 
-import com.example.cotrace.MapsActivity;
-import com.example.cotrace.QRreader;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.cotrace.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,6 +36,7 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -50,11 +50,17 @@ public class HotspotFragment extends Fragment implements OnMapReadyCallback {
     MapView mMapView;
     private HeatmapTileProvider mProvider;
     private TileOverlay mOverlay;
+    private RequestQueue queue;
+    private Boolean apiOnResponse;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 //        hotspotViewModel =
 //                ViewModelProviders.of(this).get(HotspotViewModel.class);
+        Toast.makeText(getContext(), "Please wait...", Toast.LENGTH_LONG).show();
+        queue = Volley.newRequestQueue(getContext());
+        new APITask().execute();
+
         try {
             root = inflater.inflate(R.layout.fragment_hotspots, container, false);
             MapsInitializer.initialize(this.getActivity());
@@ -75,6 +81,9 @@ public class HotspotFragment extends Fragment implements OnMapReadyCallback {
         return root;
     }
 
+    /**
+     * Life cycle for using MapView
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -119,6 +128,9 @@ public class HotspotFragment extends Fragment implements OnMapReadyCallback {
         addHeatMap();
     }
 
+    /**
+     * Add a heatmap layer
+     */
     private void addHeatMap() {
         List<LatLng> heatMapList = null;
 
@@ -138,6 +150,9 @@ public class HotspotFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
+    /**
+     * Add a heatmap layer
+     */
     private ArrayList<LatLng> readItems(int resource) throws JSONException {
         ArrayList<LatLng> list = new ArrayList<LatLng>();
         InputStream inputStream = getResources().openRawResource(resource);
@@ -150,5 +165,79 @@ public class HotspotFragment extends Fragment implements OnMapReadyCallback {
             list.add(new LatLng(lat, lng));
         }
         return list;
+    }
+
+    /**
+     * Retrieve API data async
+     */
+    private class APITask extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            apiOnResponse = false;
+        }
+
+        @Override
+        protected String doInBackground(String... args) {
+            Log.i("api call", "start");
+            try {
+                while (!apiOnResponse) {
+                    // Ask database object to request database
+                    apiCall();
+                    Thread.sleep(1000);
+                }
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+
+            return "Executed";
+        }
+
+        @SuppressLint("Assert")
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            Log.i("apicall done", result);
+
+            // Test API call
+            assert apiOnResponse;
+
+
+        }
+    }
+
+    /**
+     * This method will call our database endpoint
+     * @return
+     */
+    private void apiCall() {
+        //TODO: replace url with databse endpoint
+        String url = "https://api.data.gov.sg/v1/transport/carpark-availability";
+
+
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response.toString());
+                    // items
+                    Log.i("testing", String.valueOf(jsonObject));
+                    // Api successful
+                    apiOnResponse = true;
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+
+        queue.add(request);
     }
 }
