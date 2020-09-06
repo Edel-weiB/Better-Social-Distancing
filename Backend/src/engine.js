@@ -6,6 +6,13 @@
 const fs = require("fs");
 const express = require("express");
 const mongoose = require("mongoose");
+const MongoClient = require("mongodb").MongoClient;
+
+// Load Credentials
+const credentials = JSON.parse(
+    // Added __dirname for relative directory search
+    fs.readFileSync(__dirname + "/ATLAS_credendials.json", "utf8")
+);
 
 require("dotenv").config({
     path: __dirname + "/db.env",
@@ -13,23 +20,80 @@ require("dotenv").config({
 // Create Express app
 const app = express();
 
-// Load Credentials
-// const credentials = JSON.parse(
-//     fs.readFileSync("./ATLAS_credendials.json", "utf8")
-// );
-
 //_______________________________________________________________________
 //
-//                          Hello World
+//                          RNJesus
 //_______________________________________________________________________
-// To test the server, go to your localhost:3000
-// you should see Hello World!
-// app.get("/", (req, res) => res.send("Hello World!"));
+// Box Mullet Transform RNG
+// https://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform
+// ---
+// for singapore
+// minx = 1.239808
+// miny = 103.670679
+// maxx = 1.462897
+// maxy = 103.972252
+// centre_x = 1.289832
+// centre_y = 103.845270
+random = (n, min_x, min_y, max_x, max_y, centre_x, centre_y) => {
+    const sigma = 1;
+    const mean = 1;
+
+    const transformConst = 4;
+    const transformX = (max_x - min_x) / transformConst;
+    const offsetX = (max_x + min_x) / 2;
+    const transformY = (max_y - min_y) / transformConst;
+    const offsetY = (max_y + min_y) / 2;
+
+    let x = new Array(n);
+    let y = new Array(n);
+
+    for (i = 0; i < n; i++) {
+        u1 = Math.random();
+        u2 = Math.random();
+
+        R = Math.sqrt(-2 * Math.log(u1));
+        theta = 2 * Math.PI * u2;
+
+        z1 = R * Math.cos(theta);
+        z2 = R * Math.sin(theta);
+
+        x[i] = (z1 * sigma + mean) * transformX + offsetX;
+        y[i] = (z2 * sigma + mean) * transformY + offsetY;
+    }
+    return [x, y];
+};
 
 //_______________________________________________________________________
 //
 //                          Functions
 //_______________________________________________________________________
+
+// MongoDB client kept connection status for timebeing until migration into Mongoose
+
+connect_2_db = (credentials) => {
+    const ATLAS_connection_string =
+        "mongodb+srv://" +
+        credentials.username +
+        ":" +
+        credentials.password +
+        credentials.hostName +
+        "/" +
+        // we are accessing database name(i.e map not cluster name)
+        // so thats why its been renamed to creds.database
+        credentials.database +
+        "?retryWrites=true&w=majority";
+    const uri =
+        ATLAS_connection_string +
+        "&useNewUrlParser=true&useUnifiedTopology=true";
+    const client = new MongoClient(uri);
+    return client;
+};
+sleep = (ms) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
+// Mongoose Connection to MongoDB Atlas
+
 mongoose.connection.on("open", (ref) => {
     console.log("Connection to MongoDB Atlas Established");
 });
@@ -62,29 +126,6 @@ const client = mongoose.connect(URL, {
 //                          Routings
 //_______________________________________________________________________
 
-//-------------- Map -------------------
-// Add new map points
-app.get("/map/add", (req, res) => {
-    const x = req.query.pointx;
-    const y = req.query.pointy;
-
-    // Main Run
-    (async () => {
-        // Connect and insert data
-        const client = connect_2_db(credentials);
-        await client.connect();
-        const db = client.db("map");
-        const collection = db.collection("heatmap");
-        await collection.insertOne({
-            x: x,
-            y: y,
-        });
-        client.close();
-        // send done signal
-        await res.send("done");
-    })();
-});
-
 //Ensure to prevent CORS Error
 app.use((req, res, next) => {
     // allows access from anywhere
@@ -110,6 +151,48 @@ app.use((req, res, next) => {
     // THE AUTHOR HERE IS AN ABSOLUTE DUMBASS FORGOT TO PUT THE LINE BELOW
     // ALlow other routes to take over as well
     next();
+});
+
+//-------------- Map -------------------
+// Add new map points
+app.get("/map/add", (req, res) => {
+    const x = req.query.pointx;
+    const y = req.query.pointy;
+
+    // Main Run
+    (async () => {
+        // Connect and insert data
+        const client = connect_2_db(credentials);
+        await client.connect();
+        const db = client.db("map");
+        const collection = db.collection("heatmap");
+        await collection.insertOne({
+            x: x,
+            y: y,
+        });
+        client.close();
+        // send done signal
+        await res.send("done");
+    })();
+});
+
+//-------------- RNG -------------------
+app.get("/rng", (req, res) => {
+    const n = 10;
+
+    let numbers = random(
+        n,
+        1.239808,
+        103.670679,
+        1.462897,
+        103.972252,
+        1.289832,
+        103.84527
+    );
+    let x = numbers[0];
+    let y = numbers[1];
+
+    res.send(JSON.stringify([x, y]));
 });
 
 const userRoutes = require("./routes/users");
