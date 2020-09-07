@@ -6,9 +6,13 @@
 const fs = require('fs');
 const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
+const bodyParser = require('body-parser');
 
 // Create Express app
 const app = express()
+
+// user bodyParser
+app.use(bodyParser.json());
 
 // Load Credenti
 const credentials = JSON.parse(fs.readFileSync('ATLAS_credendials.json', 'utf8'));
@@ -111,11 +115,50 @@ app.get('/rng', (req, res) => {
     let numbers = random(n, 1.239808, 103.670679, 1.462897, 103.972252, 1.289832, 103.845270);
     let x = numbers[0];
     let y = numbers[1];
+
+    let temp_array = new Array(x.length);
+    for (let i = 0; i < x.length; i++) {
+        temp_array[i] = {
+            "lat": x[i],
+            "long": y[i],
+        }
+    }
         
-    res.send(JSON.stringify([x,y]));
+    req.body = temp_array;
+    res.json(req.body);
 })
-app.get('/rng', (req, res) => {
-    
+app.put('/map/add_many/:n', (req, res) => {
+    const { n } = req.params;
+
+    let numbers = random(n, 1.239808, 103.670679, 1.462897, 103.972252, 1.289832, 103.845270);
+    let x = numbers[0];
+    let y = numbers[1];
+
+    let temp_array = new Array(x.length);
+    for (let i = 0; i < x.length; i++) {
+        temp_array[i] = {
+            "lat": x[i],
+            "long": y[i],
+        }
+    }
+
+    // Main Run 
+    (async () => {
+        // Connect and insert data
+        const client = connect_2_db(credentials);
+        await client.connect();
+        const db = client.db("map");
+        const collection = db.collection("heatmap");
+        await collection.insertMany(
+            temp_array,
+            {
+                ordered: false,
+            });
+        client.close()
+        // send done signal
+        req.body = { "Ok": true };
+        await res.json(req.body);
+    })();
 })
 
 
@@ -125,4 +168,4 @@ app.get('/rng', (req, res) => {
 //_______________________________________________________________________
 
 // Start the Express server
-app.listen(3000, () => console.log('Server running on port 3000!'))
+app.listen(3000, () => console.log('Server running on port 3000!'));
