@@ -1,27 +1,52 @@
 # Salted DT3
+
 Saltier than the dead sea
 
 ![til](./Resource/mccree.gif)
 
 McCree:
-> Easy.
-## Database
-Copy and rename ```ATLAS_credendials_template.json``` into ```ATLAS_credendials.json```
 
-And fill in the ```username```, ```password```, ```cluster``` and ```HostName```
+> Easy.
+
+## Database
+
+Copy and rename `ATLAS_credendials_template.json` into `ATLAS_credendials.json`
+
+And fill in the `username`, `password`, `cluster` and `HostName`
+
+DON'T CHANGE ANYTHING ELSE
+
 ## Node
+
 ### Installation
+
 simply
+
 ```
-npm -i
+cd Backend
+npm install
 ```
-### Runnning
-in cmd
+
+### Running
+
+in cmd in the Backend directory
+
 ```
-node Backend/engine.js
+npm start
 ```
+
+### Run Tests
+
+in cmd/Terminal in the Backend directory
+
+```
+npm run test
+```
+
 ## Map DB functions
+
 ### Add a point
+
 ```
 localhost:3000/map/add?pointx=888&pointy=777
 ```
