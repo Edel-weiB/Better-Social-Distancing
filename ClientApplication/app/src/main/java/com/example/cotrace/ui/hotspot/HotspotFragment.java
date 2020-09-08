@@ -18,7 +18,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.cotrace.APITask;
 import com.example.cotrace.R;
+import com.example.cotrace.onAPICompleted;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -42,7 +44,7 @@ import java.util.Scanner;
 
 import static android.content.ContentValues.TAG;
 
-public class HotspotFragment extends Fragment implements OnMapReadyCallback {
+public class HotspotFragment extends Fragment implements OnMapReadyCallback, onAPICompleted {
 
 //    private HotspotViewModel hotspotViewModel;
     private View root;
@@ -50,23 +52,25 @@ public class HotspotFragment extends Fragment implements OnMapReadyCallback {
     MapView mMapView;
     private HeatmapTileProvider mProvider;
     private TileOverlay mOverlay;
-    private RequestQueue queue;
-    private Boolean apiOnResponse;
+
+    private JSONObject pointsAPIJSON;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 //        hotspotViewModel =
 //                ViewModelProviders.of(this).get(HotspotViewModel.class);
         Toast.makeText(getContext(), "Please wait...", Toast.LENGTH_LONG).show();
-        queue = Volley.newRequestQueue(getContext());
-        new APITask().execute();
+
+        // Async API Call
+        APITask getAPICall = new APITask(getContext(), "https://api.data.gov.sg/v1/transport/carpark-availability", this);
+        getAPICall.execute();
+
 
         try {
             root = inflater.inflate(R.layout.fragment_hotspots, container, false);
             MapsInitializer.initialize(this.getActivity());
             mMapView = (MapView) root.findViewById(R.id.heatmap);
             mMapView.onCreate(savedInstanceState);
-            mMapView.getMapAsync(this);
         }
         catch (android.view.InflateException e){
             Log.e(TAG, "Hotspot Inflate exception");
@@ -121,6 +125,8 @@ public class HotspotFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mHeatMap = googleMap;
 
+        Log.i("TEST POINTS", String.valueOf(pointsAPIJSON));
+
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
         mHeatMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
@@ -134,6 +140,7 @@ public class HotspotFragment extends Fragment implements OnMapReadyCallback {
     private void addHeatMap() {
         List<LatLng> heatMapList = null;
 
+        //TODO: add pointsAPIJSON
         // Get the data: latitude/longitude positions of place locations.
         try {
             heatMapList = readItems(R.raw.place_locations);
@@ -168,76 +175,13 @@ public class HotspotFragment extends Fragment implements OnMapReadyCallback {
     }
 
     /**
-     * Retrieve API data async
+     * onAPICompleted callback, will return API GET in JSONObject
      */
-    private class APITask extends AsyncTask<String, String, String> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            apiOnResponse = false;
-        }
-
-        @Override
-        protected String doInBackground(String... args) {
-            Log.i("api call", "start");
-            try {
-                while (!apiOnResponse) {
-                    // Ask database object to request database
-                    apiCall();
-                    Thread.sleep(1000);
-                }
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-
-            return "Executed";
-        }
-
-        @SuppressLint("Assert")
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-
-            Log.i("apicall done", result);
-
-            // Test API call
-            assert apiOnResponse;
-
-
-        }
-    }
-
-    /**
-     * This method will call our database endpoint
-     * @return
-     */
-    private void apiCall() {
-        //TODO: replace url with databse endpoint
-        String url = "https://api.data.gov.sg/v1/transport/carpark-availability";
-
-
-
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response.toString());
-                    // items
-                    Log.i("testing", String.valueOf(jsonObject));
-                    // Api successful
-                    apiOnResponse = true;
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-            }
-        });
-
-        queue.add(request);
+    @Override
+    public void onAPICompleted(JSONObject value) {
+        Log.i("onAPICompleted Listener", String.valueOf(value));
+        pointsAPIJSON = value;
+        // Only populate map after API callback is completed
+        mMapView.getMapAsync(this);
     }
 }
