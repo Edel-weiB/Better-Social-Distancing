@@ -7,7 +7,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
+import android.widget.ViewSwitcher;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -48,6 +51,9 @@ public class HotspotFragment extends Fragment implements OnMapReadyCallback, onA
 
 //    private HotspotViewModel hotspotViewModel;
     private View root;
+    private ViewSwitcher viewSwitcher;
+    private View graph;
+    private Button graphBtn, heatmapBtn;
     GoogleMap mHeatMap;
     MapView mMapView;
     private HeatmapTileProvider mProvider;
@@ -68,20 +74,40 @@ public class HotspotFragment extends Fragment implements OnMapReadyCallback, onA
 
         try {
             root = inflater.inflate(R.layout.fragment_hotspots, container, false);
+
+            viewSwitcher = (ViewSwitcher) root.findViewById(R.id.hotspotViewSwitcher);
+
             MapsInitializer.initialize(this.getActivity());
             mMapView = (MapView) root.findViewById(R.id.heatmap);
             mMapView.onCreate(savedInstanceState);
+
+            graph = root.findViewById(R.id.graph);
+
+            graphBtn = (Button) root.findViewById(R.id.graphBtn);
+            heatmapBtn = (Button) root.findViewById(R.id.heatmapBtn);
+
+            graphBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (viewSwitcher.getCurrentView() != graph) {
+                        viewSwitcher.showNext();
+                    }
+                }
+            });
+
+            heatmapBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (viewSwitcher.getCurrentView() != mMapView) {
+                        viewSwitcher.showPrevious();
+                    }
+                }
+            });
         }
         catch (android.view.InflateException e){
             Log.e(TAG, "Hotspot Inflate exception");
         }
-//        final TextView textView = root.findViewById(R.id.text_hotspots);
-//        hotspotViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                textView.setText(s);
-//            }
-//        });
+
         return root;
     }
 
