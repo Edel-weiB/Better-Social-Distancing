@@ -36,13 +36,13 @@ exports.mongooseconnect = () => {
 
     const URL =
         `mongodb+srv://` +
-        process.env.DATABASE_USERNAME +
+        process.env.DATABASE1_USERNAME +
         ":" +
-        process.env.DATABASE_PASSWORD +
+        process.env.DATABASE1_PASSWORD +
         "@" +
-        process.env.DATABASE_HOST +
+        process.env.DATABASE1_HOST +
         "/" +
-        process.env.DATABASE_COLLECTION +
+        process.env.DATABASE1_COLLECTION +
         "?retryWrites=true&w=majority";
 
     const client = mongoose.connect(URL, {

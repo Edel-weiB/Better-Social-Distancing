@@ -132,3 +132,7 @@ dist
 
 # Credentials
 ATLAS_credendials.json
+
+
+#Sample Data
+data.csv

@@ -6,7 +6,9 @@
 const fs = require("fs");
 const express = require("express");
 const connectdb = require("./helpers/connectdb");
+const morgan = require("morgan");
 
+const bodyParser = require("body-parser");
 // Loading dotenv
 require("dotenv").config({
     path: __dirname + "/db.env",
@@ -52,6 +54,10 @@ app.use((req, res, next) => {
     // Makes this function pass on the next route so this acts like a passthrough
     next();
 });
+
+app.use(morgan("dev"));
+
+app.use(bodyParser.json());
 
 // Map Routes (RNG and add)
 const mapRoutes = require("./routes/maps");
