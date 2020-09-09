@@ -6,29 +6,42 @@
     android:layout_height="match_parent"
     tools:context=".ui.hotspot.HotspotFragment">
 
-    <com.google.android.gms.maps.MapView
+    <ViewSwitcher
+        android:id="@+id/hotspotViewSwitcher"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/heatmap"/>
+        android:layout_height="550dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/graphBtn">
 
-<!--    <Button-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="@string/title_activity_maps"-->
-<!--        android:id="@+id/mapBtn"-->
-<!--        android:layout_marginTop="30dp"-->
-<!--        app:layout_constraintBottom_toTopOf="@+id/nav_host_fragment"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/heatmap"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-<!--    <TextView-->
-<!--        android:id="@+id/text_hotspots"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:textAlignment="center"-->
-<!--        android:textSize="20sp"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="1.0"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/graph"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </ViewSwitcher>
+
+
+    <Button
+        android:id="@+id/heatmapBtn"
+        android:layout_width="193dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="4dp"
+        android:text="heatmap"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/graphBtn"
+        android:layout_width="193dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="4dp"
+        android:text="graph"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
