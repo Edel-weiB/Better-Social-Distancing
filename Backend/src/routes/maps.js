@@ -3,6 +3,8 @@ const express = require("express");
 const router = express.Router();
 const connectMongo = require("../helpers/connectdb");
 const rng = require("../helpers/rng");
+const mongoose = require("mongoose");
+const Heatmap = require("../models/heatmap");
 
 // Load Credentials
 const credentials = JSON.parse(
@@ -52,6 +54,23 @@ router.get("/rng", (req, res) => {
     let y = numbers[1];
     // Add Status 200 and sending JSON
     res.status(200).send(JSON.stringify([x, y]));
+});
+// Added the Heatmap data endpoint
+// To Query http://localhost:3000/map/heatmap
+router.get("/heatmap", async (req, res) => {
+    Heatmap.find()
+        .exec()
+        .then((result) => {
+            console.log(result);
+            res.status(200).json({
+                result: result,
+            });
+        })
+        .catch((err) => {
+            res.status(400).json({
+                error: err,
+            });
+        });
 });
 
 module.exports = router;
