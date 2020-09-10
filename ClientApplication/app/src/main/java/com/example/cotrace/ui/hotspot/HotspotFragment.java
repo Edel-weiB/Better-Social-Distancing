@@ -35,6 +35,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Console;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +69,10 @@ public class HotspotFragment extends Fragment implements OnMapReadyCallback, onA
         Toast.makeText(getContext(), "Please wait...", Toast.LENGTH_LONG).show();
 
         // Async API Call
-        APITask getAPICall = new APITask(getContext(), "http://192.168.1.207:3000/map", this);
+        // TODO: Change to your own Localhost IP for endpoint
+        // JW: http://192.168.50.167:3000/map
+        // Joey: http://192.168.1.207:3000/map
+        APITask getAPICall = new APITask(getContext(), "http://192.168.50.167:3000/map", this);
         getAPICall.execute();
 
 
@@ -154,10 +158,10 @@ public class HotspotFragment extends Fragment implements OnMapReadyCallback, onA
 
         Log.i("TEST POINTS", String.valueOf(pointsAPIJSON));
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mHeatMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mHeatMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        // Move camera to singapore
+        LatLng singapore = new LatLng(1.35, 103.87);
+        mHeatMap.moveCamera(CameraUpdateFactory.newLatLng(singapore));
+        mHeatMap.animateCamera(CameraUpdateFactory.zoomTo(9));
         addHeatmap();
     }
 
@@ -177,22 +181,31 @@ public class HotspotFragment extends Fragment implements OnMapReadyCallback, onA
      * Read JSONObject layer
      * @return list: ArrayList
      */
-    private ArrayList<ArrayList> readItems(int resource) throws JSONException {
-        ArrayList<LatLng> heatmapList = new ArrayList<LatLng>();
+    private ArrayList<ArrayList> readItems() throws JSONException {
+        ArrayList<LatLng> heatmapList = new ArrayList<>();
         ArrayList<graphXYValue> graphList = new ArrayList<>();
 
-        InputStream inputStream = getResources().openRawResource(resource);
-        String json = new Scanner(inputStream).useDelimiter("\\A").next();
-        JSONArray array = new JSONArray(json);
+        // items
+        JSONArray itemsArray = pointsAPIJSON.getJSONArray("items");
+
+        Log.d(TAG, "itemsArray: " + itemsArray);
+        Log.d(TAG, "itemsArray length: " + itemsArray.length());
+
 
         // Read object and add to heatmapList and graphList
-        for (int i = 0; i < array.length(); i++) {
+        for (int i = 0; i < itemsArray.length(); i++) {
+            // Get each data point
+            JSONObject object = itemsArray.getJSONObject(i);
 
-            JSONObject object = array.getJSONObject(i);
-            double lat = object.getDouble("lat");
-            double lng = object.getDouble("lng");
-            heatmapList.add(new LatLng(lat, lng));
-            graphList.add(new graphXYValue(lng, lat));
+            try {
+                double lat = object.getDouble("lat");
+                double lng = object.getDouble("long");
+                heatmapList.add(new LatLng(lat, lng));
+                graphList.add(new graphXYValue(lng, lat));
+            } catch (Exception e){
+                // When there are null data points, catch error
+                Log.d(TAG, "Error on point id:" + object.get("_id"));
+            }
         }
 
         ArrayList<ArrayList> resultArray = new ArrayList<>();
@@ -228,13 +241,13 @@ public class HotspotFragment extends Fragment implements OnMapReadyCallback, onA
 
             //set manual x bounds
             graph.getViewport().setYAxisBoundsManual(true);
-            graph.getViewport().setMaxY(-35);
-            graph.getViewport().setMinY(-40);
+            graph.getViewport().setMaxY(1.6);
+            graph.getViewport().setMinY(1.2);
 
             //set manual y bounds
             graph.getViewport().setXAxisBoundsManual(true);
-            graph.getViewport().setMaxX(147);
-            graph.getViewport().setMinX(139);
+            graph.getViewport().setMaxX(104.5);
+            graph.getViewport().setMinX(103.4);
 
 
             graph.addSeries(graphSeries);
@@ -253,7 +266,7 @@ public class HotspotFragment extends Fragment implements OnMapReadyCallback, onA
         int factor = Integer.parseInt(String.valueOf(Math.round(Math.pow(graphArray.size(),2))));
         int m = graphArray.size() - 1;
         int count = 0;
-        Log.d(TAG, "sortArray: Sorting the XYArray.");
+        Log.d(TAG, "sortArray: Sorting the graphArray.");
 
 
         while (true) {
@@ -261,7 +274,7 @@ public class HotspotFragment extends Fragment implements OnMapReadyCallback, onA
             if (m <= 0) {
                 m = graphArray.size() - 1;
             }
-            Log.d(TAG, "sortArray: m = " + m);
+//            Log.d(TAG, "sortArray: m = " + m);
             try {
                 //print out the y entrys so we know what the order looks like
                 //Log.d(TAG, "sortArray: Order:");
@@ -277,10 +290,10 @@ public class HotspotFragment extends Fragment implements OnMapReadyCallback, onA
                     graphArray.get(m).setX(tempX);
                 } else if (tempX == graphArray.get(m).getX()) {
                     count++;
-                    Log.d(TAG, "sortArray: count = " + count);
+//                    Log.d(TAG, "sortArray: count = " + count);
                 } else if (graphArray.get(m).getX() > graphArray.get(m - 1).getX()) {
                     count++;
-                    Log.d(TAG, "sortArray: count = " + count);
+//                    Log.d(TAG, "sortArray: count = " + count);
                 }
                 //break when factorial is done
                 if (count == factor) {
@@ -307,7 +320,7 @@ public class HotspotFragment extends Fragment implements OnMapReadyCallback, onA
         //TODO: add pointsAPIJSON
         // Get the data: latitude/longitude positions of place locations.
         try {
-            hotspotList = readItems(R.raw.place_locations);
+            hotspotList = readItems();
             heatmapList = hotspotList.get(0);
             graphList = hotspotList.get(1);
         } catch (JSONException e) {
