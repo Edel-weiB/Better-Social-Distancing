@@ -127,6 +127,46 @@ app.get('/map', (req, res) => {
         await res.json(req.body);
     })();
 })
+//-------------- Location String -------------------
+app.put('/location/add/:location', (req, res) => {
+    const { location } = req.params;
+
+    // Main Run 
+    (async () => {
+        // Connect and insert data
+        const client = connect_2_db(credentials);
+        await client.connect();
+        const db = client.db("map");
+        const collection = db.collection("location");
+        await collection.insertOne({
+            "location": location,
+        });
+        client.close()
+        // send done signal
+        req.body = { "Ok": true };
+        await res.json(req.body);
+    })();
+})
+app.get('/location', (req, res) => {
+    // Main Run 
+    (async () => {
+        // Connect and insert data
+        const client = connect_2_db(credentials);
+        await client.connect();
+        const db = client.db("map");
+        const collection = db.collection("location");
+        let cursor = await collection.find({});
+        let cursor_array = await cursor.toArray();
+        //console.log(cursor_array)
+        await client.close()
+        // send done signal
+        req.body = {
+            "items": cursor_array
+        };
+        await res.json(req.body);
+    })();
+})
+
 
 //-------------- RNG -------------------
 app.get('/rng', (req, res) => {
