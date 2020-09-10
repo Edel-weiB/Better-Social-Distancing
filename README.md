@@ -19,11 +19,9 @@ McCree:
 
 ## Database
 
-Copy and rename `ATLAS_credendials_template.json` into `ATLAS_credendials.json`
+After cloning the repo copy and rename `ATLAS_credendials_template.json` into `ATLAS_credendials.json`
 
 And fill in the `username`, `password`, `cluster` and `HostName`
-
-DON'T CHANGE ANYTHING ELSE
 
 ## Node
 

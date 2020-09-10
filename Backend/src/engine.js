@@ -57,6 +57,7 @@ app.use((req, res, next) => {
 
 app.use(morgan("dev"));
 
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // Map Routes (RNG and add)
@@ -66,6 +67,9 @@ app.use("/map", mapRoutes);
 // User Routes (Checkin and Checkout)
 const userRoutes = require("./routes/users");
 app.use("/users", userRoutes);
+
+const locationRoutes = require("./routes/locations");
+app.use("/location", locationRoutes);
 
 //_______________________________________________________________________
 //
