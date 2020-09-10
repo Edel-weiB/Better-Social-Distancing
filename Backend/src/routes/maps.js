@@ -139,7 +139,7 @@ router.put("/add_many/:n", (req, res) => {
         client.close();
         // send done signal
         req.body = { Ok: true };
-        await res.json(req.body);
+        await res.status(200).send(req.body);
     })();
 });
 
