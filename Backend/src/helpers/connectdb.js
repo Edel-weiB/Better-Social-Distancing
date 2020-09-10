@@ -16,7 +16,6 @@ exports.connect_2_db = (credentials) => {
     const uri =
         ATLAS_connection_string +
         "&useNewUrlParser=true&useUnifiedTopology=true";
-    console.log(uri);
     const client = new MongoClient(uri);
 
     return client;

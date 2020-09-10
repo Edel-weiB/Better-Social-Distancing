@@ -12,6 +12,27 @@ const credentials = JSON.parse(
     fs.readFileSync(__dirname + "/../helpers/ATLAS_credendials.json", "utf8")
 );
 
+router.get("/", (req, res) => {
+    // Main Run
+    (async () => {
+        // Connect and insert data
+        const client = connectMongo.connect_2_db(credentials);
+        await client.connect();
+        const db = client.db("map");
+        const collection = db.collection("heatmap");
+        let cursor = await collection.find({});
+        let cursor_array = await cursor.toArray();
+        //console.log(cursor_array)
+        await client.close();
+        // send done signal
+        req.body = {
+            items: cursor_array,
+        };
+        // Added status code for recieving data
+        await res.status(200).json(req.body);
+    })();
+});
+
 //-------------- Map Routes -------------------
 // Add new map points
 router.post("/add", (req, res) => {
@@ -52,8 +73,17 @@ router.get("/rng", (req, res) => {
     );
     let x = numbers[0];
     let y = numbers[1];
-    // Add Status 200 and sending JSON
-    res.status(200).send(JSON.stringify([x, y]));
+
+    let temp_array = new Array(x.length);
+    for (let i = 0; i < x.length; i++) {
+        temp_array[i] = {
+            lat: x[i],
+            long: y[i],
+        };
+    }
+
+    req.body = temp_array;
+    res.json(req.body);
 });
 // Added the Heatmap data endpoint
 // To Query http://localhost:3000/map/heatmap
@@ -71,6 +101,46 @@ router.get("/heatmap", async (req, res) => {
                 error: err,
             });
         });
+});
+
+router.put("/add_many/:n", (req, res) => {
+    const { n } = req.params;
+
+    let numbers = random(
+        n,
+        1.239808,
+        103.670679,
+        1.462897,
+        103.972252,
+        1.289832,
+        103.84527
+    );
+    let x = numbers[0];
+    let y = numbers[1];
+
+    let temp_array = new Array(x.length);
+    for (let i = 0; i < x.length; i++) {
+        temp_array[i] = {
+            lat: x[i],
+            long: y[i],
+        };
+    }
+
+    // Main Run
+    (async () => {
+        // Connect and insert data
+        const client = mongoConnect.connect_2_db(credentials);
+        await client.connect();
+        const db = client.db("map");
+        const collection = db.collection("heatmap");
+        await collection.insertMany(temp_array, {
+            ordered: false,
+        });
+        client.close();
+        // send done signal
+        req.body = { Ok: true };
+        await res.json(req.body);
+    })();
 });
 
 module.exports = router;
