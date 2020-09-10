@@ -23,7 +23,7 @@ McCree:
 
 ![til2](./Resource/templates_location.png)
 
-### 1. Using MongoClient
+### 1. Using MongoClient (Depreciated, use Mongoose instead)
 
 After cloning the repo copy and rename the file `ATLAS_credendials_template.json` from the templates folder into the helpers folder under the name `ATLAS_credendials.json`
 
@@ -68,8 +68,14 @@ npm run test
 
 ## API Request Lists
 
-### Add a point (GET)
+### Get Heatmap points (GET)
 
 ```url
-http://localhost:3000/map/add?pointx=888&pointy=777
+http://localhost:3000/map/
+```
+
+### Get Locations (GET)
+
+```url
+http://localhost:3000/locations/
 ```
