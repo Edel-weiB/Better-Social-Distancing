@@ -19,17 +19,33 @@ McCree:
 
 ## Database
 
-After cloning the repo copy and rename `ATLAS_credendials_template.json` into `ATLAS_credendials.json`
+### 0. Access Templates
+
+![til2](./Resource/templates_location.png)
+
+### 1. Using MongoClient
+
+After cloning the repo copy and rename the file `ATLAS_credendials_template.json` from the templates folder into the helpers folder under the name `ATLAS_credendials.json`
 
 And fill in the `username`, `password`, `cluster` and `HostName`
 
-## Node
+![til2](./Resource/helpers.png) ![til2](./Resource/credentials_template_json.png)
+
+### 2. using Mongoose
+
+After cloning the repo copy and rename the file `db-template.env` from the templates folder into the src folder under the name `db.env`.
+
+And replace the default values with your database credentials
+
+![til2](./Resource/db.env.png) ![til2](./Resource/dbenv_template.png)
+
+## API Service (Node.js)
 
 ### Installation
 
 simply
 
-```
+```bash
 cd Backend
 npm install
 ```
@@ -38,7 +54,7 @@ npm install
 
 in cmd in the Backend directory
 
-```
+```bash
 npm start
 ```
 
@@ -46,14 +62,14 @@ npm start
 
 in cmd/Terminal in the Backend directory
 
-```
+```bash
 npm run test
 ```
 
-## Map DB functions
+## API Request Lists
 
-### Add a point
+### Add a point (GET)
 
-```
-localhost:3000/map/add?pointx=888&pointy=777
+```url
+http://localhost:3000/map/add?pointx=888&pointy=777
 ```

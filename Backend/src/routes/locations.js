@@ -2,8 +2,6 @@ const fs = require("fs");
 const express = require("express");
 const router = express.Router();
 const connectMongo = require("../helpers/connectdb");
-const rng = require("../helpers/rng");
-const mongoose = require("mongoose");
 
 // Load Credentials
 const credentials = JSON.parse(
