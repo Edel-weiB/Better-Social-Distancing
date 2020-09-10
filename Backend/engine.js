@@ -107,6 +107,26 @@ app.get('/map/add', (req, res) => {
         await res.send("done");
     })();
 })
+// Get heatmap
+app.get('/map', (req, res) => {
+    // Main Run 
+    (async () => {
+        // Connect and insert data
+        const client = connect_2_db(credentials);
+        await client.connect();
+        const db = client.db("map");
+        const collection = db.collection("heatmap");
+        let cursor = await collection.find({});
+        let cursor_array = await cursor.toArray();
+        //console.log(cursor_array)
+        await client.close()
+        // send done signal
+        req.body = {
+            "items": cursor_array
+        };
+        await res.json(req.body);
+    })();
+})
 
 //-------------- RNG -------------------
 app.get('/rng', (req, res) => {

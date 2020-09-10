@@ -1,10 +1,15 @@
 package com.example.cotrace.ui.settings;
 
+import android.widget.Button;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.cotrace.R;
+
 public class SettingsViewModel extends ViewModel {
+
 
     private MutableLiveData<String> mText;
 

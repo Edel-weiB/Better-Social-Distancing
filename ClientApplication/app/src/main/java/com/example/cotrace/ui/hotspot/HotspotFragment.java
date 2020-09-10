@@ -159,9 +159,12 @@ public class HotspotFragment extends Fragment implements OnMapReadyCallback {
         String json = new Scanner(inputStream).useDelimiter("\\A").next();
         JSONArray array = new JSONArray(json);
         for (int i = 0; i < array.length(); i++) {
+
             JSONObject object = array.getJSONObject(i);
             double lat = object.getDouble("lat");
             double lng = object.getDouble("lng");
+
+            Log.i("api loop i", String.valueOf(lat));
             list.add(new LatLng(lat, lng));
         }
         return list;
@@ -213,7 +216,7 @@ public class HotspotFragment extends Fragment implements OnMapReadyCallback {
      */
     private void apiCall() {
         //TODO: replace url with databse endpoint
-        String url = "https://api.data.gov.sg/v1/transport/carpark-availability";
+        String url = "http://192.168.1.207:3000/map";
 
 
 
