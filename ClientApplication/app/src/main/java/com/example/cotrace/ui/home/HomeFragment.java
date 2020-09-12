@@ -14,22 +14,37 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.cotrace.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
+    private TextView dateTimeDisplay;
+    private Calendar calendar;
+    private SimpleDateFormat dateFormat;
+    private String date_display;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
-        final TextView textView = root.findViewById(R.id.text_home);
-        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
+
+        TextView date = root.findViewById(R.id.date);
+        calendar = Calendar.getInstance();
+        dateFormat = new SimpleDateFormat("MMM/dd");
+        date_display = dateFormat.format(calendar.getTime());
+        date.setText(date_display);
+
+//        final TextView textView = root.findViewById(R.id.text_home);
+
+//        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+//            @Override
+//            public void onChanged(@Nullable String s) {
+////                textView.setText(s);
+//            }
+//        });
         return root;
     }
 }
