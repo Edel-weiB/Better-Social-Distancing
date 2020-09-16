@@ -32,8 +32,6 @@ exports.mongooseconnect = () => {
     mongoose.connection.on("error", (error) => {
         console.log("Connection Failed Below is the Error Message");
     });
-    console.log(process.env.DATABASE1_HOST);
-    console.log(process.env.DATABASE1_USERNAME);
     const URL =
         "mongodb+srv://" +
         process.env.MONGODB_USERNAME +
@@ -42,7 +40,7 @@ exports.mongooseconnect = () => {
         "@" +
         process.env.MONGODB_HOST +
         "/" +
-        process.env.MONGODB_COLLECTION +
+        process.env.MONGODB_DATABASE +
         "?retryWrites=true&w=majority";
 
     const client = mongoose.connect(URL, {
