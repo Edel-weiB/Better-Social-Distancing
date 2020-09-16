@@ -9,7 +9,7 @@ const Heatmap = require("../models/heatmap");
 // Load Credentials
 const credentials = JSON.parse(
     // Added __dirname for relative directory search
-    fs.readFileSync(__dirname + "/../helpers/ATLAS_credendials.json", "utf8")
+    fs.readFileSync(__dirname + "/ATLAS_credendials.json", "utf8")
 );
 
 router.get("/", (req, res) => {

@@ -9,10 +9,17 @@ const connectdb = require("./helpers/connectdb");
 const morgan = require("morgan");
 
 const bodyParser = require("body-parser");
-// Loading dotenv
-require("dotenv").config({
-    path: __dirname + "/db.env",
+const path = require("path");
+const reqPath = path.join(__dirname + "/db.env");
+console.log(reqPath);
+const result = require("dotenv").config({
+    path: reqPath,
 });
+
+if (result.error) {
+    throw result.error;
+}
+
 // Create Express app
 const app = express();
 
@@ -29,7 +36,7 @@ connectdb.mongooseconnect();
 //                          Routings
 //_______________________________________________________________________
 
-//Ensure to prevent CORS Error
+//Ensure to prevent CORS(Cross Origin Resource Sharing) Error
 app.use((req, res, next) => {
     // allows access from anywhere
     res.header("Access-Control-Allow-Origin", "*");
