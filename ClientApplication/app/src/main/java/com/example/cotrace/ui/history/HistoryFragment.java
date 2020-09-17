@@ -3,6 +3,8 @@ package com.example.cotrace.ui.history;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,19 +22,26 @@ import com.example.cotrace.ui.hotspot.HotspotViewModel;
 public class HistoryFragment extends Fragment {
 
     private HistoryViewModel historyViewModel;
+    SharedPreferences preferences;
+    TextView history_location;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+
+        preferences = getContext().getSharedPreferences("Location", Context.MODE_PRIVATE);
         historyViewModel =
                 ViewModelProviders.of(this).get(HistoryViewModel.class);
         View root = inflater.inflate(R.layout.fragment_history, container, false);
-        final TextView textView = root.findViewById(R.id.text_history);
-        historyViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
+
+
+        history_location = root.findViewById(R.id.location1);
+        String placeholder = "Unknown";
+        String location = preferences.getString("loc", placeholder);
+        String date_n_time = preferences.getString("date_and_time", placeholder);
+
+        history_location.setText(location + "\n" + date_n_time);
+
+
         return root;
     }
 }
