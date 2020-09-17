@@ -5,10 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.Image;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -26,12 +28,17 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import java.util.Calendar;
+import java.util.Date;
+
 public class QRreader extends AppCompatActivity {
     CodeScanner codeScanner;
     CodeScannerView scannView;
     Button resultData;
     ImageView qr_flash;
     SharedPreferences locationpref;
+    Date currentTime = Calendar.getInstance().getTime();
+
 
 
     @Override
@@ -78,8 +85,13 @@ public class QRreader extends AppCompatActivity {
             public void onClick(View v) {
                 String location_result = resultData.getText().toString();
                 System.out.println(location_result); //for testing
+                String dateNtime = currentTime.toString();
+                System.out.println(dateNtime);
                 locationpref.edit().putString("loc", location_result).apply();
+                locationpref.edit().putString("date_and_time", dateNtime).apply();
                 // here need to add thank you and check in page etc....
+
+                startActivity(new Intent(getBaseContext(), checked_in.class));
 
             }
         });
