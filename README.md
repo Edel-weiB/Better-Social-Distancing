@@ -23,9 +23,9 @@ McCree:
 
 ![til2](./Resource/templates_location.png)
 
-### 1. Using MongoClient (Depreciated, use Mongoose instead)
+### 1. Using MongoClient (or Mongoose)
 
-After cloning the repo copy and rename the file `ATLAS_credendials_template.json` from the templates folder into the helpers folder under the name `ATLAS_credendials.json`
+After cloning the repo copy and rename the file `ATLAS_credendials_template.json` from the templates folder into the routes folder under the name `ATLAS_credendials.json`
 
 And fill in the `username`, `password`, `cluster` and `HostName`
 

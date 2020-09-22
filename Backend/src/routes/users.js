@@ -39,12 +39,12 @@ router.get("/", async (req, res, next) => {
 // needs username, password, phNumber, password
 router.post("/signup", async (req, res, next) => {
     try {
-        const passwordHash = await bcrypt.hash("testpassword", 10);
+        const passwordHash = await bcrypt.hash("tester123", 10);
         console.log(passwordHash);
         const user = new User({
             _id: mongoose.Types.ObjectId(),
-            name: "Admin",
-            username: "test",
+            name: "Vishal Manghnani",
+            username: "test123",
             phNumber: 3243241,
             password: passwordHash,
             isAdmin: false,
@@ -67,25 +67,30 @@ router.post("/signup", async (req, res, next) => {
 
 router.post("/login", async (req, res, next) => {
     try {
-        const result = await User.find({ username: req.body.username });
-        if (!result) {
-            res.status(403).json({
+        const user = await User.find({ username: req.body.username });
+        if (!user) {
+            res.status(500).json({
                 error: "Username doesnt exist",
             });
         } else {
-            const outcome = bcrypt.compare(req.password, result.password);
+            console.log(user[0].password);
+            const outcome = await bcrypt.compare(
+                req.body.password,
+                user[0].password
+            );
             if (!outcome) {
-                res.status(403).json({
+                res.status(401).json({
                     message: "Invalid Password",
                 });
             } else {
                 const token = jwt.sign(
-                    { username: result.username },
-                    process.env.JWT_SECRET_KEY,
-                    {}
+                    { username: user.username },
+                    process.env.JWT_SECRET_KEY
                 );
+                console.log(token);
                 res.status(200).json({
                     message: "Logged In",
+                    id: user._id,
                     token: token,
                 });
             }
