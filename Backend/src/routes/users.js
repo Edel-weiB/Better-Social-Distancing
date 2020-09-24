@@ -39,13 +39,13 @@ router.get("/", async (req, res, next) => {
 // needs username, password, phNumber, password
 router.post("/signup", async (req, res, next) => {
     try {
-        const passwordHash = await bcrypt.hash("tester123", 10);
+        const passwordHash = await bcrypt.hash(req.body.password, 10);
         console.log(passwordHash);
         const user = new User({
             _id: mongoose.Types.ObjectId(),
-            name: "Vishal Manghnani",
-            username: "test123",
-            phNumber: 3243241,
+            name: req.body.name,
+            username: req.body.username,
+            phNumber: req.body.phNumber,
             password: passwordHash,
             isAdmin: false,
         });
