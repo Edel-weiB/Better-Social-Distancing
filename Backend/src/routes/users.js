@@ -6,13 +6,14 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const isAuthorized = require("../middleware/authorized");
 
-router.get("/checkin", isAuthorized, (req, res, next) => {
+router.get("/checkin", isAuthorized, async (req, res, next) => {
+    // const user = await User.findById(req.body.
     res.status(200).json({
         message: "Checkin Complete",
     });
 });
 
-router.get("/checkout", (req, res, next) => {
+router.get("/checkout", isAuthorized, (req, res, next) => {
     res.status(200).json({
         message: "Checkout Complete",
     });
@@ -36,7 +37,7 @@ router.get("/", async (req, res, next) => {
 });
 
 // send data in JSON for signup
-// needs username, password, phNumber, password
+// needs username, password, phNumber, name
 router.post("/signup", async (req, res, next) => {
     try {
         const passwordHash = await bcrypt.hash(req.body.password, 10);
@@ -90,7 +91,8 @@ router.post("/login", async (req, res, next) => {
                 console.log(token);
                 res.status(200).json({
                     message: "Logged In",
-                    id: user._id,
+                    username: user.username,
+                    _id: user._id,
                     token: token,
                 });
             }
